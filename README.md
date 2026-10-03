@@ -44,7 +44,4 @@ Settings are saved per character.
 
 ## Development
 
-The addon source lives in `Spacebound/`. The repository root holds tooling only:
-
-- `.luarc.json` configures [lua-language-server](https://github.com/LuaLS/lua-language-server) with the [WoW API annotations](https://github.com/Ketho/vscode-wow-api). Adjust `workspace.library` to point at your local clone.
-- `CLAUDE.md` holds the project notes.
+The addon source lives in `Spacebound/`. For editor support, use [lua-language-server](https://github.com/LuaLS/lua-language-server) with the [WoW API annotations](https://github.com/Ketho/vscode-wow-api).

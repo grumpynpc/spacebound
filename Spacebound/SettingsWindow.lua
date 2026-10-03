@@ -53,8 +53,77 @@ local function CreateCheckboxRow(labelText)
 	return checkbox;
 end
 
+local descriptionContainer = CreateFrame("Frame", nil, window);
+
+local description = descriptionContainer:CreateFontString(nil, "ARTWORK", "GameFontNormal");
+description:SetPoint("TOPLEFT", 25, 0);
+description:SetWidth(WINDOW_WIDTH - 45);
+description:SetJustifyH("LEFT");
+description:SetText(L.SettingsDescription);
+
+descriptionContainer:SetSize(WINDOW_WIDTH, description:GetStringHeight());
+
+tinsert(elements, descriptionContainer);
+
 local enableCheckbox = CreateCheckboxRow(L.SettingsEnableCheckboxLabel);
 local useMacroCheckbox = CreateCheckboxRow(L.SettingsUseMacroCheckboxLabel);
+local showCombatButtonCheckbox = CreateCheckboxRow(L.SettingsShowCombatButtonCheckboxLabel);
+
+local combatButtonHintContainer = CreateFrame("Frame", nil, window);
+combatButtonHintContainer:SetSize(WINDOW_WIDTH, 24);
+
+local combatButtonHint = combatButtonHintContainer:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall");
+combatButtonHint:SetPoint("TOPLEFT", 25, 0);
+combatButtonHint:SetPoint("BOTTOMRIGHT", -20, 0);
+combatButtonHint:SetJustifyH("LEFT");
+combatButtonHint:SetText(L.SettingsCombatButtonHint);
+
+tinsert(elements, combatButtonHintContainer);
+
+--[[----------------------------------------------------------------------------
+	CreateSliderRow
+	Creates a labelled slider row, with its value shown on the right, and
+	adds it to the layout.
+------------------------------------------------------------------------------]]
+local function CreateSliderRow(labelText, minimum, maximum, steps, FormatValue)
+	local container = CreateFrame("Frame", nil, window);
+	container:SetSize(WINDOW_WIDTH, 26);
+
+	local label = container:CreateFontString(nil, "ARTWORK", "GameFontWhite");
+	label:SetJustifyH("LEFT");
+	label:SetText(labelText);
+	label:SetPoint("LEFT", 25, 0);
+
+	local rightLabel = MinimalSliderWithSteppersMixin.Label.Right;
+	local formatters = {
+		[rightLabel] = CreateMinimalSliderFormatter(rightLabel, FormatValue),
+	};
+
+	local slider = CreateFrame("Slider", nil, container, "MinimalSliderWithSteppersTemplate");
+	slider:SetPoint("LEFT", container, "CENTER", -10, 0);
+	slider:SetSize(100, 26);
+	slider:Init(minimum, minimum, maximum, steps, formatters);
+
+	tinsert(elements, container);
+	return slider, container;
+end
+
+--[[----------------------------------------------------------------------------
+	FormatPercentage
+------------------------------------------------------------------------------]]
+local function FormatPercentage(value)
+	return ("%d%%"):format(value * 100 + 0.5);
+end
+
+--[[----------------------------------------------------------------------------
+	FormatPixels
+------------------------------------------------------------------------------]]
+local function FormatPixels(value)
+	return ("%dpx"):format(value + 0.5);
+end
+
+local groundedOpacitySlider, groundedOpacityContainer = CreateSliderRow(L.SettingsGroundedOpacityLabel, 0, 1, 20, FormatPercentage);
+local buttonSizeSlider, buttonSizeContainer = CreateSliderRow(L.SettingsButtonSizeLabel, 24, 192, 42, FormatPixels);
 
 local macroInputContainer = CreateFrame("Frame", nil, window, "ResizeLayoutFrame");
 macroInputContainer:SetSize(WINDOW_WIDTH, 100);
@@ -189,6 +258,18 @@ local function ShowModeRows(useMacro)
 end
 
 --[[----------------------------------------------------------------------------
+	ShowCombatButtonPreview
+	Shows the drag hint and the draggable combat button when enabled.
+------------------------------------------------------------------------------]]
+local function ShowCombatButtonPreview(showCombatButton)
+	combatButtonHintContainer:SetShown(showCombatButton);
+	groundedOpacityContainer:SetShown(showCombatButton);
+	buttonSizeContainer:SetShown(showCombatButton);
+	RebuildLayout();
+	Spacebound.SetCombatButtonPreview(showCombatButton);
+end
+
+--[[----------------------------------------------------------------------------
 	UpdateSpellInfo
 	Shows the icon, name and description of the given spell.
 ------------------------------------------------------------------------------]]
@@ -230,14 +311,19 @@ end
 	Loads the saved settings into every control.
 ------------------------------------------------------------------------------]]
 local function PopulateWindow()
-	_isDirty = false;
-
 	enableCheckbox:SetChecked(Settings.GetEnabled());
 	useMacroCheckbox:SetChecked(Settings.GetUseMacro());
+	showCombatButtonCheckbox:SetChecked(Settings.GetShowCombatButton());
+	groundedOpacitySlider.Slider:SetValue(Settings.GetCombatButtonGroundedOpacity());
+	buttonSizeSlider.Slider:SetValue(Settings.GetCombatButtonSize());
 	macroScrollFrame.EditBox:SetText(Settings.GetMacroText() or "");
 	ShowSpellPreview(Settings.GetSpellIdentifier());
 
 	ShowModeRows(Settings.GetUseMacro());
+	ShowCombatButtonPreview(Settings.GetShowCombatButton());
+
+	-- reset last: setting the slider values above fires their change callbacks
+	_isDirty = false;
 	UpdateTitle();
 end
 
@@ -253,6 +339,9 @@ local function OnSaveButtonClicked()
 
 	Settings.SetEnabled(enableCheckbox:GetChecked());
 	Settings.SetUseMacro(useMacroCheckbox:GetChecked());
+	Settings.SetShowCombatButton(showCombatButtonCheckbox:GetChecked());
+	Settings.SetCombatButtonGroundedOpacity(groundedOpacitySlider.Slider:GetValue());
+	Settings.SetCombatButtonSize(buttonSizeSlider.Slider:GetValue());
 	Settings.SetMacroText(macroScrollFrame.EditBox:GetText());
 	Settings.SetSpellIdentifier(Settings.ResolveSpellIdentifier(spellEditBox:GetText()));
 	Spacebound.Refresh();
@@ -306,6 +395,18 @@ useMacroCheckbox:SetScript("OnClick", function(self)
 	ShowModeRows(self:GetChecked());
 end);
 
+showCombatButtonCheckbox:SetScript("OnClick", function(self)
+	MarkDirty();
+	ShowCombatButtonPreview(self:GetChecked());
+end);
+
+groundedOpacitySlider:RegisterCallback(MinimalSliderWithSteppersMixin.Event.OnValueChanged, MarkDirty, groundedOpacityContainer);
+
+buttonSizeSlider:RegisterCallback(MinimalSliderWithSteppersMixin.Event.OnValueChanged, function(_, value)
+	MarkDirty();
+	Spacebound.SetCombatButtonPreviewSize(value);
+end, buttonSizeContainer);
+
 macroScrollFrame.EditBox:SetScript("OnTextChanged", function(self, userInput)
 	if userInput then
 		MarkDirty();
@@ -334,6 +435,9 @@ defaultsButton:SetScript("OnEvent", OnDefaultsButtonEvent);
 defaultsButton:RegisterEvent("MODIFIER_STATE_CHANGED");
 
 window:SetScript("OnShow", PopulateWindow);
+window:SetScript("OnHide", function()
+	Spacebound.SetCombatButtonPreview(false);
+end);
 
 --[[----------------------------------------------------------------------------
 	Spacebound.ToggleSettingsWindow

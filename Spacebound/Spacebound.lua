@@ -39,6 +39,7 @@ function Spacebound.Refresh()
 
 	macroButton:SetAttribute("macrotext", Settings.GetMacroText() or "");
 	ClearOverrideBindings(keyWatcherFrame);
+	Spacebound.UpdateCombatButton();
 end
 
 --[[----------------------------------------------------------------------------

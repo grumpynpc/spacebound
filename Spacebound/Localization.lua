@@ -34,8 +34,13 @@ L["Help"] = "Commands:|n"
 	.. "  /sb on | off - enable or disable|n"
 	.. "  /sb status - show the current configuration";
 L["ThisCannotBeUndone"] = RED_FONT_COLOR:WrapTextInColorCode("This cannot be undone!");
+L["SettingsDescription"] = "This addon allows you to use Spacebar while out of combat and falling to cast an ability or macro, While in combat you can use the optional combat button to cast the same ability or macro.";
 L["SettingsEnableCheckboxLabel"] = "Enable Spacebound: ";
 L["SettingsUseMacroCheckboxLabel"] = "Use Macro Text: ";
+L["SettingsShowCombatButtonCheckboxLabel"] = "Show combat button: ";
+L["SettingsCombatButtonHint"] = "Drag the combat button to move it while this window is open.";
+L["SettingsGroundedOpacityLabel"] = "Grounded opacity: ";
+L["SettingsButtonSizeLabel"] = "Button size: ";
 L["SettingsSpellLabel"] = "Falling Spell";
 L["SettingsSpellTooltip"] = "The spell cast when you press jump while falling.";
 L["SettingsSpellTooltipInstruction"] = "This can be either a spell name or ID.";

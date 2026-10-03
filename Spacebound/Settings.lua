@@ -15,6 +15,10 @@ local function GetDefaultSettings()
 		UseMacro = false,
 		MacroText = "",
 		SpellIdentifier = PLAYER_CLASS == "MAGE" and SLOW_FALL_SPELL_IDENTIFIER or nil,
+		ShowCombatButton = false,
+		CombatButtonPosition = { "TOP", "TOP", 0, -120 },
+		CombatButtonGroundedOpacity = 0.1,
+		CombatButtonSize = 96,
 	};
 end
 
@@ -101,6 +105,65 @@ end
 ------------------------------------------------------------------------------]]
 function Settings.SetSpellIdentifier(spellIdentifier)
 	SPACEBOUND_SETTINGS.SpellIdentifier = spellIdentifier;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.GetShowCombatButton
+------------------------------------------------------------------------------]]
+function Settings.GetShowCombatButton()
+	return SPACEBOUND_SETTINGS.ShowCombatButton;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.SetShowCombatButton
+------------------------------------------------------------------------------]]
+function Settings.SetShowCombatButton(showCombatButton)
+	SPACEBOUND_SETTINGS.ShowCombatButton = showCombatButton;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.GetCombatButtonPosition
+	Returns point, relativePoint, x and y relative to UIParent.
+------------------------------------------------------------------------------]]
+function Settings.GetCombatButtonPosition()
+	return unpack(SPACEBOUND_SETTINGS.CombatButtonPosition);
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.SetCombatButtonPosition
+------------------------------------------------------------------------------]]
+function Settings.SetCombatButtonPosition(point, relativePoint, x, y)
+	SPACEBOUND_SETTINGS.CombatButtonPosition = { point, relativePoint, x, y };
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.GetCombatButtonGroundedOpacity
+	Opacity (0 to 1) of the combat button while not falling.
+------------------------------------------------------------------------------]]
+function Settings.GetCombatButtonGroundedOpacity()
+	return SPACEBOUND_SETTINGS.CombatButtonGroundedOpacity;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.SetCombatButtonGroundedOpacity
+------------------------------------------------------------------------------]]
+function Settings.SetCombatButtonGroundedOpacity(opacity)
+	SPACEBOUND_SETTINGS.CombatButtonGroundedOpacity = opacity;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.GetCombatButtonSize
+	Width and height of the combat button in pixels.
+------------------------------------------------------------------------------]]
+function Settings.GetCombatButtonSize()
+	return SPACEBOUND_SETTINGS.CombatButtonSize;
+end
+
+--[[----------------------------------------------------------------------------
+	Settings.SetCombatButtonSize
+------------------------------------------------------------------------------]]
+function Settings.SetCombatButtonSize(size)
+	SPACEBOUND_SETTINGS.CombatButtonSize = size;
 end
 
 --[[----------------------------------------------------------------------------

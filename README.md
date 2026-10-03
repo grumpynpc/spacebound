@@ -33,9 +33,9 @@ The settings window offers the same options: an enable toggle, a spell or macro 
 
 Settings are saved per character.
 
-| Spell mode | Macro mode |
+| Spell mode | Macro mode with the combat button |
 |---|---|
-| ![Spell mode](screenshots/Spacebound1.png) | ![Macro mode](screenshots/Spacebound2.png) |
+| ![Settings window in spell mode, casting Walk on Air](screenshots/Spacebound1.png) | ![Settings window in macro mode with the combat button enabled, showing the opacity and size sliders and the draggable button above](screenshots/Spacebound2.png) |
 
 ## Combat button
 

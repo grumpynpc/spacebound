@@ -40,7 +40,6 @@ Settings are saved per character.
 ## Limitations
 
 - **Does not work in combat.** WoW blocks addons from changing keybindings during combat, so the jump key only jumps while you're in combat.
-- Pressing jump again while the effect is already active casts the spell again.
 
 ## Development
 

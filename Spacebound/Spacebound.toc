@@ -1,0 +1,13 @@
+## Interface: 16001
+## Author: Alex
+## Version: 0.1.0
+## Title: Spacebound
+## Notes: Spacebar jumps on the ground and casts your chosen spell or macro while falling.
+## IconTexture: Interface/Icons/Spell_magic_featherfall.blp
+## SavedVariablesPerCharacter: SPACEBOUND_SETTINGS
+
+Localization.lua
+Settings.lua
+Spacebound.lua
+SettingsWindow.lua
+SlashCommands.lua
